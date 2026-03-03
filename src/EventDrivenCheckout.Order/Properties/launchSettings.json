@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EventDrivenCheckout.Order": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

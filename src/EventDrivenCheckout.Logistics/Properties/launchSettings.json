@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EventDrivenCheckout.Logistics": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
