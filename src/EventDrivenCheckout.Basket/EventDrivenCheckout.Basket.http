@@ -1,3 +1,33 @@
 @EventDrivenCheckout.Basket_HostAddress = http://localhost:5238
 
+###
+POST {{EventDrivenCheckout.Basket_HostAddress}}/api/additem
+Content-Type: application/json
+
+{
+  "userId": "user-1",
+  "productId": "p-1",
+  "name": "Stick",
+  "price": 250,
+  "quantity": 2
+}
+
+###
+POST {{EventDrivenCheckout.Basket_HostAddress}}/api/additem
+Content-Type: application/json
+
+{
+  "userId": "user-1",
+  "productId": "p-2",
+  "name": "Stone",
+  "price": 120,
+  "quantity": 1
+}
+
+###
 POST {{EventDrivenCheckout.Basket_HostAddress}}/api/checkout
+Content-Type: application/json
+
+{
+  "userId": "user-1"
+}

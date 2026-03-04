@@ -15,6 +15,8 @@ public class Program
         builder.Services.AddAuthorization();
         builder.Services.AddOpenApi();
 
+        builder.AddRedisClient("cache");
+
         builder.Services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>
