@@ -1,4 +1,4 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Contracts.Events;
 using EventDrivenCheckout.Order.Commands;
 using EventDrivenCheckout.Order.Data.Models;
 using MassTransit;
@@ -31,32 +31,40 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         During(CREATING,
             When(CreateOrder.Completed)
+                .PublishAsync(context => context.Init<OrderAcceptedV2>(new
+                {
+                    OrderId = context.Message.OrderId,
+                    TriggerFailure = context.Saga.TriggerFailure,
+                    Hey = "Hi"
+                }))
                 .TransitionTo(PENDING_LOGISTICS)
-                .Publish(context => new OrderAccepted(context.Saga.CorrelationId, context.Saga.TriggerFailure))
         );
 
         During(PENDING_LOGISTICS,
             When(ShipmentRepriced)
-                .TransitionTo(CONFIRMING)
                 .Request(ConfirmOrder, context => new ConfirmOrderCommand(context.Message.OrderId, context.Message.ShippingPrice))
+                .TransitionTo(CONFIRMING),
+            When(ShipmentFailed)
+                .Request(CancelOrder, context => new CancelOrderCommand(context.Message.OrderId))
+                .TransitionTo(CANCELLING)
         );
 
         During(CONFIRMING,
             When(ConfirmOrder.Completed)
+                .PublishAsync(context => context.Init<OrderConfirmed>(new
+                {
+                    OrderId = context.Message.OrderId
+                }))
                 .TransitionTo(CONFIRMED)
-                .Publish(context => new OrderConfirmed(context.Message.OrderId))
-        );
-
-        During(PENDING_LOGISTICS,
-            When(ShipmentFailed)
-                .TransitionTo(CANCELLING)
-                .Request(CancelOrder, context => new CancelOrderCommand(context.Message.OrderId))
         );
 
         During(CANCELLING,
             When(CancelOrder.Completed)
+                .PublishAsync(context => context.Init<OrderCancelled>(new
+                {
+                    OrderId = context.Message.OrderId
+                }))
                 .TransitionTo(ORDER_CANCELLED)
-                .Publish(context => new OrderCancelled(context.Message.OrderId))
         );
     }
 
@@ -67,9 +75,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public State CANCELLING { get; private set; } = default!;
     public State ORDER_CANCELLED { get; private set; } = default!;
 
-    public Event<CheckoutStarted> CheckoutStarted { get; private set; } = default!;
+    public Event<BasketCheckedOut> CheckoutStarted { get; private set; } = default!;
     public Event<ShipmentRepriced> ShipmentRepriced { get; private set; } = default!;
     public Event<ShipmentFailed> ShipmentFailed { get; private set; } = default!;
+
 
     public Request<OrderState, CreateOrderCommand, OrderCreatedResponse> CreateOrder { get; private set; } = default!;
     public Request<OrderState, ConfirmOrderCommand, OrderConfirmedResponse> ConfirmOrder { get; private set; } = default!;

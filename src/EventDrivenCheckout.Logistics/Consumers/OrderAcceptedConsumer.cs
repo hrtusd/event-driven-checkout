@@ -1,4 +1,4 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Contracts.Events;
 using EventDrivenCheckout.Logistics.Services;
 using MassTransit;
 

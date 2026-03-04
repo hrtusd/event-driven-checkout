@@ -1,4 +1,4 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Contracts.Events;
 using EventDrivenCheckout.Order.Consumers;
 using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;

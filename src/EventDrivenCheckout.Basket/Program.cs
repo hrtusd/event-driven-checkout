@@ -1,4 +1,4 @@
-using EventDrivenCheckout.Contracts;
+using EventDrivenCheckout.Contracts.Events;
 using FastEndpoints;
 using MassTransit;
 
@@ -25,7 +25,7 @@ public class Program
                 var connectionString = builder.Configuration.GetConnectionString("messaging");
                 cfg.Host(connectionString);
 
-                cfg.Send<CheckoutStarted>(x => x.UseCorrelationId(m => m.CorrelationId));
+                cfg.Send<BasketCheckedOut>(x => x.UseCorrelationId(m => m.CorrelationId));
 
                 cfg.ConfigureEndpoints(context);
             });

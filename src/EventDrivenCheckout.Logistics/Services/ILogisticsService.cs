@@ -1,4 +1,4 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Contracts.Events;
 
 namespace EventDrivenCheckout.Logistics.Services;
 

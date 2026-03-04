@@ -1,5 +1,6 @@
 ﻿using EventDrivenCheckout.Basket.Requests;
 using EventDrivenCheckout.Contracts;
+using EventDrivenCheckout.Contracts.Events;
 using FastEndpoints;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -29,12 +30,13 @@ public class CheckoutEndpoint(
         var items = JsonSerializer.Deserialize<List<AddItemRequest>>(json.ToString()!)!;
 
         var correlationId = Guid.NewGuid();
-        await publishEndpoint.Publish(new CheckoutStarted(
-            correlationId,
-            request.UserId,
-            [.. items.Select(i => new BasketItem(i.ProductId, i.Name, i.Price, i.Quantity))],
-            request.TriggerFailure
-        ), cancellationToken);
+        await publishEndpoint.Publish<BasketCheckedOut>(new
+        {
+            CorrelationId = correlationId,
+            Items = (List<BasketItem>)[.. items.Select(i => new BasketItem(i.ProductId, i.Name, i.Price, i.Quantity))],
+            request.TriggerFailure,
+            request.UserId
+        }, cancellationToken);
 
         await db.KeyDeleteAsync(key);
 

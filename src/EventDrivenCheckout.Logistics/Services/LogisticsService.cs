@@ -1,4 +1,4 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Contracts.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +14,10 @@ public class LogisticsService(
 
         logger.LogInformation("Shipment reserved {Id}", orderId);
 
-        await publishEndpoint.Publish(new ShipmentReserved(orderId));
+        await publishEndpoint.Publish<ShipmentReserved>(new
+        {
+            OrderId = orderId,
+        });
 
         await Task.Delay(3000);
 
@@ -22,7 +25,10 @@ public class LogisticsService(
         {
             logger.LogInformation("Shipment failed {Id}", orderId);
 
-            await publishEndpoint.Publish(new ShipmentFailed(orderId));
+            await publishEndpoint.Publish<ShipmentFailed>(new
+            {
+                OrderId = orderId,
+            });
         }
         else
         {
@@ -30,7 +36,11 @@ public class LogisticsService(
 
             logger.LogInformation("Shipment repriced {Id}", orderId);
 
-            await publishEndpoint.Publish(new ShipmentRepriced(orderId, finalPrice));
+            await publishEndpoint.Publish<ShipmentRepriced>(new
+            {
+                OrderId = orderId,
+                ShippingPrice = finalPrice
+            });
         }
     }
 }
