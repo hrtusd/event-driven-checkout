@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="EventDrivenCheckout.AppHost/EventDrivenCheckout.AppHost.csproj" />
   <Project Path="EventDrivenCheckout.Basket/EventDrivenCheckout.Basket.csproj" />
+  <Project Path="EventDrivenCheckout.Contracts/EventDrivenCheckout.Contracts.csproj" Id="7eed0e8f-dd30-440b-ad3b-f8a6989bd849" />
   <Project Path="EventDrivenCheckout.Logistics/EventDrivenCheckout.Logistics.csproj" />
   <Project Path="EventDrivenCheckout.Order/EventDrivenCheckout.Order.csproj" />
   <Project Path="EventDrivenCheckout.ServiceDefaults/EventDrivenCheckout.ServiceDefaults.csproj" />

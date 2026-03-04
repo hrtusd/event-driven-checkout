@@ -1,6 +1,3 @@
 @EventDrivenCheckout.Basket_HostAddress = http://localhost:5238
 
-GET {{EventDrivenCheckout.Basket_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
+POST {{EventDrivenCheckout.Basket_HostAddress}}/api/checkout
