@@ -1,10 +1,10 @@
-﻿using EventDrivenCheckout.Contracts;
+﻿using EventDrivenCheckout.Order.Commands;
 
 namespace EventDrivenCheckout.Order.Services;
 
 public interface IOrderService
 {
-    Task CreateOrderAsync(CheckoutStarted message);
-    Task CompleteOrderAsync(ShipmentRepriced message);
-    Task CancelOrderAsync(ShipmentFailed message);
+    Task CreateOrderAsync(CreateOrderCommand message);
+    Task CompleteOrderAsync(ConfirmOrderCommand message);
+    Task CancelOrderAsync(CancelOrderCommand message);
 }

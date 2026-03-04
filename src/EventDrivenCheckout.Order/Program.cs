@@ -1,6 +1,7 @@
 ﻿using EventDrivenCheckout.Contracts;
 using EventDrivenCheckout.Order.Consumers;
 using EventDrivenCheckout.Order.Data;
+using EventDrivenCheckout.Order.Data.Models;
 using EventDrivenCheckout.Order.Services;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,24 @@ internal class Program
 
         builder.Services.AddMassTransit(x =>
         {
-            x.AddConsumer<CheckoutStartedConsumer>();
-            x.AddConsumer<ShipmentRepricedConsumer>();
-            x.AddConsumer<ShipmentFailedConsumer>();
+            x.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                .EntityFrameworkRepository(r =>
+                {
+                    r.ConcurrencyMode = ConcurrencyMode.Optimistic;
+                    r.ExistingDbContext<OrderDbContext>();
+                    r.UseSqlServer();
+                });
+
+            x.AddEntityFrameworkOutbox<OrderDbContext>(o =>
+            {
+                o.UseSqlServer();
+                o.UseBusOutbox();
+            });
+
+            x.AddConsumer<CreateOrderConsumer>();
+            x.AddConsumer<ConfirmOrderConsumer>();
+            x.AddConsumer<CancelOrderConsumer>();
+
             x.UsingRabbitMq((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("messaging");
