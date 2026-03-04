@@ -26,6 +26,7 @@ internal class Program
         {
             x.AddConsumer<CheckoutStartedConsumer>();
             x.AddConsumer<ShipmentRepricedConsumer>();
+            x.AddConsumer<ShipmentFailedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("messaging");

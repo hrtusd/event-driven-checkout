@@ -28,6 +28,7 @@ internal class Program
 
                 cfg.Send<ShipmentReserved>(x => x.UseCorrelationId(m => m.OrderId));
                 cfg.Send<ShipmentRepriced>(x => x.UseCorrelationId(m => m.OrderId));
+                cfg.Send<ShipmentFailed>(x => x.UseCorrelationId(m => m.OrderId));
 
                 cfg.ConfigureEndpoints(context);
             });

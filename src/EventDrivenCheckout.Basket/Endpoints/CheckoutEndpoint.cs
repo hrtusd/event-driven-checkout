@@ -32,7 +32,8 @@ public class CheckoutEndpoint(
         await publishEndpoint.Publish(new CheckoutStarted(
             correlationId,
             request.UserId,
-            [.. items.Select(i => new BasketItem(i.ProductId, i.Name, i.Price, i.Quantity))]
+            [.. items.Select(i => new BasketItem(i.ProductId, i.Name, i.Price, i.Quantity))],
+            request.TriggerFailure
         ), cancellationToken);
 
         await db.KeyDeleteAsync(key);

@@ -18,10 +18,19 @@ public class LogisticsService(
 
         await Task.Delay(3000);
 
-        var finalPrice = new Random().Next(59, 199);
+        if (message.TriggerFailure)
+        {
+            logger.LogInformation("Shipment failed {Id}", orderId);
 
-        logger.LogInformation("Shipment repriced {Id}", orderId);
+            await publishEndpoint.Publish(new ShipmentFailed(orderId));
+        }
+        else
+        {
+            var finalPrice = new Random().Next(59, 199);
 
-        await publishEndpoint.Publish(new ShipmentRepriced(orderId, finalPrice));
+            logger.LogInformation("Shipment repriced {Id}", orderId);
+
+            await publishEndpoint.Publish(new ShipmentRepriced(orderId, finalPrice));
+        }
     }
 }
