@@ -31,12 +31,6 @@ public class Program
             });
         });
 
-        builder.Services.AddOpenTelemetry()
-            .WithTracing(tracing =>
-            {
-                tracing.AddSource("MassTransit");
-            });
-
         var app = builder.Build();
 
         app.MapDefaultEndpoints();

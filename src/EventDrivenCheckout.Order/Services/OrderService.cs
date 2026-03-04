@@ -1,8 +1,6 @@
-﻿using EventDrivenCheckout.Contracts;
-using EventDrivenCheckout.Order.Commands;
+﻿using EventDrivenCheckout.Order.Commands;
 using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +8,6 @@ namespace EventDrivenCheckout.Order.Services;
 
 internal class OrderService(
     OrderDbContext db,
-    IPublishEndpoint publishEndpoint,
     ILogger<OrderService> logger) : IOrderService
 {
     public async Task CreateOrderAsync(CreateOrderCommand message)
@@ -42,7 +39,7 @@ internal class OrderService(
     {
         logger.LogInformation("Completing order {Id}", message.OrderId);
 
-        var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == message.OrderId);
+        var order = await db.Orders.Include(x => x.Items).FirstOrDefaultAsync(o => o.Id == message.OrderId);
 
         if (order != null)
         {

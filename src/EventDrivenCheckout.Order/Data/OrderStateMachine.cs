@@ -31,8 +31,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         During(CREATING,
             When(CreateOrder.Completed)
-        .TransitionTo(PENDING_LOGISTICS)
-        .Publish(context => new OrderAccepted(context.Saga.CorrelationId, context.Saga.TriggerFailure))
+                .TransitionTo(PENDING_LOGISTICS)
+                .Publish(context => new OrderAccepted(context.Saga.CorrelationId, context.Saga.TriggerFailure))
         );
 
         During(PENDING_LOGISTICS,

@@ -56,20 +56,11 @@ internal class Program
             });
         });
 
-        builder.Services.AddOpenTelemetry()
-            .WithTracing(tracing =>
-            {
-                tracing.AddSource("MassTransit")
-                       .AddSource("Microsoft.EntityFrameworkCore.SqlServer");
-            });
-
         var host = builder.Build();
-
 
         using var scope = host.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
         db.Database.Migrate();
-
 
         host.Run();
     }
