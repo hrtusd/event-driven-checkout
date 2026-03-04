@@ -1,3 +1,4 @@
+using EventDrivenCheckout.Contracts;
 using FastEndpoints;
 using MassTransit;
 
@@ -22,8 +23,9 @@ public class Program
             x.UsingRabbitMq((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("messaging");
-
                 cfg.Host(connectionString);
+
+                cfg.Send<CheckoutStarted>(x => x.UseCorrelationId(m => m.CorrelationId));
 
                 cfg.ConfigureEndpoints(context);
             });

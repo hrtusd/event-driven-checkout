@@ -1,4 +1,5 @@
-﻿using EventDrivenCheckout.Order.Consumers;
+﻿using EventDrivenCheckout.Contracts;
+using EventDrivenCheckout.Order.Consumers;
 using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Services;
 using MassTransit;
@@ -24,12 +25,15 @@ internal class Program
         builder.Services.AddMassTransit(x =>
         {
             x.AddConsumer<CheckoutStartedConsumer>();
-            x.AddConsumer<OrderShippedConsumer>();
+            x.AddConsumer<ShipmentRepricedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("messaging");
-
                 cfg.Host(connectionString);
+
+                cfg.Send<OrderAccepted>(x => x.UseCorrelationId(m => m.OrderId));
+                cfg.Send<OrderConfirmed>(x => x.UseCorrelationId(m => m.OrderId));
+                cfg.Send<OrderCancelled>(x => x.UseCorrelationId(m => m.OrderId));
 
                 cfg.ConfigureEndpoints(context);
             });

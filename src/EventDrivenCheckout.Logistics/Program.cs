@@ -1,4 +1,7 @@
-﻿using MassTransit;
+﻿using EventDrivenCheckout.Contracts;
+using EventDrivenCheckout.Logistics.Consumers;
+using EventDrivenCheckout.Logistics.Services;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,14 +16,18 @@ internal class Program
 
         builder.AddServiceDefaults();
 
+        builder.Services.AddScoped<ILogisticsService, LogisticsService>();
+
         builder.Services.AddMassTransit(x =>
         {
             x.AddConsumer<OrderAcceptedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("messaging");
-
                 cfg.Host(connectionString);
+
+                cfg.Send<ShipmentReserved>(x => x.UseCorrelationId(m => m.OrderId));
+                cfg.Send<ShipmentRepriced>(x => x.UseCorrelationId(m => m.OrderId));
 
                 cfg.ConfigureEndpoints(context);
             });

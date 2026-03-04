@@ -4,7 +4,14 @@ public record CheckoutStarted(Guid CorrelationId, string UserId, List<BasketItem
 public record BasketItem(string ProductId, string Name, decimal Price, int Quantity);
 
 
-public record OrderAccepted(Guid CorrelationId, Guid OrderId);
+public record OrderAccepted(Guid OrderId);
 
 
-public record OrderShipped(Guid CorrelationId, Guid OrderId, DateTime ShippedAt);
+public record OrderConfirmed(Guid OrderId);
+
+public record OrderCancelled(Guid OrderId);
+
+
+public record ShipmentReserved(Guid OrderId);
+
+public record ShipmentRepriced(Guid OrderId, decimal ShippingPrice);

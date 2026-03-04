@@ -2,6 +2,7 @@
 using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace EventDrivenCheckout.Order.Services;
@@ -11,9 +12,27 @@ internal class OrderService(
     IPublishEndpoint publishEndpoint,
     ILogger<OrderService> logger) : IOrderService
 {
-    public Task CompleteOrderAsync(OrderShipped message)
+    public async Task CompleteOrderAsync(ShipmentRepriced message)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Order shipped {Id}", message.OrderId);
+
+        var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == message.OrderId);
+
+        if (order != null)
+        {
+            order.Status = OrderStatus.CONFIRMED;
+            order.ShippingPrice = message.ShippingPrice;
+
+            await db.SaveChangesAsync();
+
+            await publishEndpoint.Publish(new OrderConfirmed(order.Id));
+
+            logger.LogInformation("Order confirmed {Id}", message.OrderId);
+        }
+        else
+        {
+            logger.LogWarning("Order not found: {Id}", message.OrderId);
+        }
     }
 
     public async Task CreateOrderAsync(CheckoutStarted message)
@@ -40,6 +59,6 @@ internal class OrderService(
 
         logger.LogInformation("Order created {Id}", order.Id);
 
-        await publishEndpoint.Publish(new OrderAccepted(order.Id, order.Id));
+        await publishEndpoint.Publish(new OrderAccepted(order.Id));
     }
 }
