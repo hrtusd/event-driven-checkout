@@ -38,7 +38,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                     TriggerFailure = context.Saga.TriggerFailure,
                     Hey = "Hi from V2"
                 }))
-                .TransitionTo(PENDING_LOGISTICS)
+                .TransitionTo(PENDING_LOGISTICS),
+            When(CreateOrder.Faulted)
+                .PublishAsync(context => context.Init<OrderCancelled>(new { OrderId = context.Saga.CorrelationId }))
+                .TransitionTo(ORDER_CANCELLED)
         );
 
         During(PENDING_LOGISTICS,
@@ -56,7 +59,10 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 {
                     OrderId = context.Message.OrderId
                 }))
-                .TransitionTo(CONFIRMED)
+                .TransitionTo(CONFIRMED),
+            When(ConfirmOrder.Faulted)
+                .Request(CancelOrder, context => new CancelOrderCommand(context.Saga.CorrelationId))
+                .TransitionTo(CANCELLING)
         );
 
         During(CANCELLING,
@@ -65,6 +71,9 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 {
                     OrderId = context.Message.OrderId
                 }))
+                .TransitionTo(ORDER_CANCELLED),
+            When(CancelOrder.Faulted)
+                .PublishAsync(context => context.Init<OrderCancelled>(new { OrderId = context.Saga.CorrelationId }))
                 .TransitionTo(ORDER_CANCELLED)
         );
     }
