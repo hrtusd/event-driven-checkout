@@ -3,7 +3,6 @@ using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EventDrivenCheckout.Order.Services;
 
@@ -17,6 +16,7 @@ internal class OrderService(
 
         if (await db.Orders.AnyAsync(o => o.Id == message.OrderId))
         {
+            logger.LogInformation("Order {Id} already exists, skipping", message.OrderId);
             return;
         }
 
@@ -45,22 +45,22 @@ internal class OrderService(
     {
         logger.LogInformation("Completing order {Id}", message.OrderId);
 
-        var order = await db.Orders.Include(x => x.Items).FirstOrDefaultAsync(o => o.Id == message.OrderId);
+        var order = await db.Orders.Include(x => x.Items)
+                .FirstOrDefaultAsync(o => o.Id == message.OrderId) ?? throw new InvalidOperationException($"Order {message.OrderId} not found");
 
-        if (order != null)
+        if (order.Status == OrderStatus.CONFIRMED)
         {
-            order.Status = OrderStatus.CONFIRMED;
-            order.ShippingPrice = message.ShippingPrice;
-            order.TotalPrice = order.Items.Sum(i => i.Price * i.Quantity) + message.ShippingPrice;
-
-            await db.SaveChangesAsync();
-
-            logger.LogInformation("Order confirmed {Id}", message.OrderId);
+            logger.LogInformation("Order {Id} already confirmed, skipping", message.OrderId);
+            return;
         }
-        else
-        {
-            logger.LogWarning("Order not found: {Id}", message.OrderId);
-        }
+
+        order.Status = OrderStatus.CONFIRMED;
+        order.ShippingPrice = message.ShippingPrice;
+        order.TotalPrice = order.Items.Sum(i => i.Price * i.Quantity) + message.ShippingPrice;
+
+        await db.SaveChangesAsync();
+
+        logger.LogInformation("Order confirmed {Id}", message.OrderId);
     }
 
     public async Task CancelOrderAsync(CancelOrderCommand message)

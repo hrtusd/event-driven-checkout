@@ -142,15 +142,13 @@ stateDiagram
 
 ### Idempotency
 
-`OrderId` is set by the saga (equals `BasketCheckedOut.CorrelationId`) — a client-generated ID. This means every command the saga sends is inherently idempotent: if the saga retries a request after a transient failure, the consumer receives the same `OrderId` again.
+`OrderId` is set by the saga (equals `BasketCheckedOut.CorrelationId`) — a client-generated ID. This enables idempotency: if the saga retries a request after a transient failure, the consumer receives the same `OrderId` again and can use it to detect the duplicate. The actual idempotency guard is implemented in the services.
 
-Each command consumer should also guard against duplicates:
+In this project each operation handles duplicates explicitly:
 
-```csharp
-// Example in CreateOrderConsumer
-if (await db.Orders.AnyAsync(o => o.Id == message.OrderId))
-    return; // already exists — respond as success, do not insert again
-```
+- `CreateOrderAsync` — skips creation if an order with the same `OrderId` already exists
+- `CompleteOrderAsync` — skips if the order is already `CONFIRMED`, throws if the order does not exist at all (triggers saga fault and compensation)
+- `CancelOrderAsync` — no-ops silently if the order is not found, since the desired end state (`ORDER_CANCELLED`) is already achieved
 
 ### Transactional Outbox
 
