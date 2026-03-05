@@ -19,7 +19,7 @@ Open `EventDrivenCheckout.Basket.http` in Visual Studio. Run the requests in ord
 
 **1. Add items to the basket**
 
-Run requests 1 and 2 to populate basket with products.
+Run requests `1.` and `2.` to populate basket with products.
 
 **2a. Normal checkout**
 
@@ -42,4 +42,4 @@ BasketCheckedOut → OrderAcceptedV2 → ShipmentFailed → OrderCancelled
 ## Observing the Flow
 
 - **Aspire Dashboard** — structured logs from all services with state transitions visible in real time, request tracing across services, and the ability to inspect messages and state changes in depth
-- **RabbitMQ Management UI** — default username is guest and password as well as the URL is located in the resource properties in Aspire dashboard.
+- **RabbitMQ Management UI** — default username is `guest` and password as well as the URL is located in the resource properties in Aspire dashboard.
