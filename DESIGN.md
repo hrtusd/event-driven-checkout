@@ -93,38 +93,21 @@ The `OrderStateMachine` orchestrates the full checkout lifecycle. The saga insta
 
 ### State Diagram
 
-```
-                    ┌─────────────────────┐
-                    │       Initial       │
-                    └──────────┬──────────┘
-                               │ BasketCheckedOut
-                               │ → CreateOrderCommand (Request)
-                               ▼
-                    ┌─────────────────────┐
-                    │      CREATING       │
-                    └──────────┬──────────┘
-                               │ CreateOrder.Completed
-                               │ → publish OrderAcceptedV2
-                               ▼
-                    ┌─────────────────────┐
-                    │  PENDING_LOGISTICS  │◄──────────────────────┐
-                    └────────┬────────────┘                       │
-                             │                                    │
-          ShipmentRepriced   │         ShipmentFailed             │
-    ConfirmOrderCommand ◄────┘    CancelOrderCommand ◄────────────┘
-                             │                    │
-                             ▼                    ▼
-                    ┌──────────────┐    ┌──────────────────┐
-                    │  CONFIRMING  │    │    CANCELLING    │
-                    └──────┬───────┘    └────────┬─────────┘
-                           │                     │
-              Completed    │           Completed │
-         publish           │      publish        │
-         OrderConfirmed    │      OrderCancelled │
-                           ▼                     ▼
-                    ┌──────────────┐    ┌──────────────────┐
-                    │  CONFIRMED   │    │  ORDER_CANCELLED │
-                    └──────────────┘    └──────────────────┘
+```mermaid
+stateDiagram
+    [*] --> CREATING : BasketCheckedOut<br/>Request CreateOrderCommand
+
+    CREATING --> PENDING_LOGISTICS : Completed<br/>publish OrderAcceptedV2
+    CREATING --> ORDER_CANCELLED   : Faulted<br/>publish OrderCancelled
+
+    PENDING_LOGISTICS --> CONFIRMING : ShipmentRepriced<br/>Request ConfirmOrderCommand
+    PENDING_LOGISTICS --> CANCELLING : ShipmentFailed<br/>Request CancelOrderCommand
+
+    CONFIRMING --> CONFIRMED      : Completed<br/>publish OrderConfirmed
+    CONFIRMING --> CANCELLING     : Faulted<br/>Request CancelOrderCommand
+
+    CANCELLING --> ORDER_CANCELLED : Completed<br/>publish OrderCancelled
+    CANCELLING --> ORDER_CANCELLED : Faulted<br/>publish OrderCancelled
 ```
 
 ### Transition Table
@@ -150,8 +133,8 @@ The `OrderStateMachine` orchestrates the full checkout lifecycle. The saga insta
 | `ShipmentRepriced`  | Logistics service| Order saga                     |
 | `ShipmentFailed`    | Logistics service| Order saga                     |
 | `ShipmentReserved`  | Logistics service| (not consumed in demo)         |
-| `OrderConfirmed`    | Order saga       | Notifications, Billing         |
-| `OrderCancelled`    | Order saga       | Notifications, Inventory       |
+| `OrderConfirmed`    | Order saga       | (not consumed in demo)         |
+| `OrderCancelled`    | Order saga       | (not consumed in demo)         |
 
 ---
 
