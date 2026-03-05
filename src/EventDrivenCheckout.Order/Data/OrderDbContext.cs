@@ -1,4 +1,5 @@
 ﻿using EventDrivenCheckout.Order.Data.Models;
+using EventDrivenCheckout.Order.StateMachine;
 using MassTransit;
 using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;

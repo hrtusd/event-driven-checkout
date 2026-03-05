@@ -1,6 +1,6 @@
 ﻿using EventDrivenCheckout.Basket.Requests;
-using EventDrivenCheckout.Contracts;
 using EventDrivenCheckout.Contracts.Events;
+using EventDrivenCheckout.Contracts.Records;
 using FastEndpoints;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;

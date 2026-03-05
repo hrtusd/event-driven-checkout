@@ -3,7 +3,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EventDrivenCheckout.Order.Data;
+namespace EventDrivenCheckout.Order.StateMachine;
 
 public class OrderStateMap : SagaClassMap<OrderState>
 {

@@ -2,5 +2,5 @@
 
 public interface ShipmentFailed
 {
-    Guid OrderId { get; init; }
+    Guid OrderId { get; }
 }

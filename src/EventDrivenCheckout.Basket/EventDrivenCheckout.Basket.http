@@ -1,6 +1,6 @@
 @EventDrivenCheckout.Basket_HostAddress = http://localhost:5238
 
-###
+### 1. Add item to basket
 POST {{EventDrivenCheckout.Basket_HostAddress}}/api/additem
 Content-Type: application/json
 
@@ -12,7 +12,7 @@ Content-Type: application/json
   "quantity": 2
 }
 
-###
+### 2. Add some more
 POST {{EventDrivenCheckout.Basket_HostAddress}}/api/additem
 Content-Type: application/json
 
@@ -24,11 +24,20 @@ Content-Type: application/json
   "quantity": 1
 }
 
-###
+### 3a. Checkout
 POST {{EventDrivenCheckout.Basket_HostAddress}}/api/checkout
 Content-Type: application/json
 
 {
   "userId": "user-1",
   "triggerFailure": false
+}
+
+### 3b. Checkout with simulated failure
+POST {{EventDrivenCheckout.Basket_HostAddress}}/api/checkout
+Content-Type: application/json
+
+{
+  "userId": "user-1",
+  "triggerFailure": true
 }

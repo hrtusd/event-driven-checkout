@@ -3,6 +3,7 @@ using EventDrivenCheckout.Order.Consumers;
 using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;
 using EventDrivenCheckout.Order.Services;
+using EventDrivenCheckout.Order.StateMachine;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

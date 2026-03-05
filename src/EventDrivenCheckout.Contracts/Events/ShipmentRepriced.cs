@@ -2,6 +2,6 @@
 
 public interface ShipmentRepriced
 {
-    Guid OrderId { get; init; }
-    decimal ShippingPrice { get; init; }
+    Guid OrderId { get; }
+    decimal ShippingPrice { get; }
 }

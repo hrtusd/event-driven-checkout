@@ -1,9 +1,10 @@
 ﻿using EventDrivenCheckout.Contracts.Events;
 using EventDrivenCheckout.Order.Commands;
 using EventDrivenCheckout.Order.Data.Models;
+using EventDrivenCheckout.Order.Responses;
 using MassTransit;
 
-namespace EventDrivenCheckout.Order.Data;
+namespace EventDrivenCheckout.Order.StateMachine;
 
 public class OrderStateMachine : MassTransitStateMachine<OrderState>
 {
@@ -35,7 +36,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 {
                     OrderId = context.Message.OrderId,
                     TriggerFailure = context.Saga.TriggerFailure,
-                    Hey = "Hi"
+                    Hey = "Hi from V2"
                 }))
                 .TransitionTo(PENDING_LOGISTICS)
         );

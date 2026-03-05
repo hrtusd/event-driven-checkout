@@ -3,6 +3,7 @@ using EventDrivenCheckout.Order.Data;
 using EventDrivenCheckout.Order.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EventDrivenCheckout.Order.Services;
 
@@ -13,6 +14,11 @@ internal class OrderService(
     public async Task CreateOrderAsync(CreateOrderCommand message)
     {
         logger.LogInformation("Creating order {Id}", message.OrderId);
+
+        if (await db.Orders.AnyAsync(o => o.Id == message.OrderId))
+        {
+            return;
+        }
 
         var order = new Data.Models.Order
         {

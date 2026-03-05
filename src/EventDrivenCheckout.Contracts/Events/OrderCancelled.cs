@@ -2,5 +2,5 @@
 
 public interface OrderCancelled
 {
-    Guid OrderId { get; init; }
+    Guid OrderId { get; }
 }

@@ -2,5 +2,5 @@
 
 public interface ShipmentReserved
 {
-    Guid OrderId { get; init; }
+    Guid OrderId { get; }
 }

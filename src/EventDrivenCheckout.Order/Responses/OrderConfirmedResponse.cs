@@ -1,3 +1,3 @@
-﻿namespace EventDrivenCheckout.Order.Commands;
+﻿namespace EventDrivenCheckout.Order.Responses;
 
 public record OrderConfirmedResponse(Guid OrderId);

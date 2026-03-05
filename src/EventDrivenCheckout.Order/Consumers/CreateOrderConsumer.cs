@@ -1,4 +1,5 @@
 ﻿using EventDrivenCheckout.Order.Commands;
+using EventDrivenCheckout.Order.Responses;
 using EventDrivenCheckout.Order.Services;
 using MassTransit;
 
