@@ -37,7 +37,7 @@ Run `3b. Checkout with simulated failure` instead — `triggerFailure: true` is 
 BasketCheckedOut → OrderAcceptedV2 → ShipmentFailed → OrderCancelled
 ```
 
-> Run steps 1 and 2 again between each test — the basket is cleared on checkout, and each checkout creates a new order with a fresh `OrderId`.
+> Run requests 1 and 2 again between each test — the basket is cleared on checkout, and each checkout creates a new order with a fresh `OrderId`.
 
 ## Observing the Flow
 
